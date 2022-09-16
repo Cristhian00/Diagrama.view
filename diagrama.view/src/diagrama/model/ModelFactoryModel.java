@@ -51,7 +51,7 @@ public class ModelFactoryModel {
 		org.eclipse.emf.ecore.resource.ResourceSet resourceSet = new org.eclipse.emf.ecore.resource.impl.ResourceSetImpl();
 
 		org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI
-				.createURI("platform:/resource/test/src/model/model.diagrama_concreta");
+				.createURI("platform:/resource/test/src/model/model2.diagrama_concreta");
 
 		org.eclipse.emf.ecore.resource.Resource resource = resourceSet.createResource(uri);
 
