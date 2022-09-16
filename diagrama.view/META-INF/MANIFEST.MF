@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: View
+Bundle-SymbolicName: diagrama.view;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ diagrama-abstract;bundle-version="0.1.0",
+ diagrama-concreto;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
