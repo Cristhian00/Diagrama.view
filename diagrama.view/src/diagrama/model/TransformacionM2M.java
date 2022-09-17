@@ -23,40 +23,14 @@ public class TransformacionM2M {
 
 		for (TCDDiagramaClases diagramaConcreta : modelFactoryConcreta.getListaDiagramas()) {
 			// crear los paquetes
+			System.out.println("Lista paquetes Concre: " + diagramaConcreta.getListaPaquetes());
+			System.out.println("Lista clases Concre: " + diagramaConcreta.getListaClases());
+			System.out.println("Lista relaciones Concre: " + diagramaConcreta.getListaRelaciones());
 			for (TCDPaquete paquete : diagramaConcreta.getListaPaquetes()) {
-				crearPaquete(paquete);
+				crearPaquetes(paquete);
 			}
-
 		}
-
 		return mensaje;
-	}
-
-	private void crearClase(TCDClase tcdClaseC) {
-		String ruta = tcdClaseC.getRuta();// a
-		String name = tcdClaseC.getNombre();
-
-		abstracta.TCDClase claseAbstracta = obtenerClaseAbstracta(name, ruta);
-		if (claseAbstracta == null) {
-			
-			abstracta.TCDClase tcdClaseA = AbstractaFactory.eINSTANCE.createTCDClase();
-			tcdClaseA.setNombre(tcdClaseC.getNombre());
-			tcdClaseA.setDocumentacion(tcdClaseC.getDocumentacion());
-			tcdClaseA.setEstereotipo(tcdClaseC.getEstereotipo());
-			tcdClaseA.setIsAbstract(tcdClaseC.isIsAbstract());
-			
-			diagrama_concreta.Visibilidad visibilidadC = tcdClaseC.getModificadorAcceso();
-			if (visibilidadC.PRIVATE_VALUE == Visibilidad.PRIVATE_VALUE) {
-				tcdClaseA.setModificadorAcceso(Visibilidad.PRIVATE);
-			} else if (visibilidadC.PUBLIC_VALUE == Visibilidad.PUBLIC_VALUE) {
-				tcdClaseA.setModificadorAcceso(Visibilidad.PUBLIC);
-			} else {
-				tcdClaseA.setModificadorAcceso(Visibilidad.PROTECTED);
-			}
-			
-			abstracta.TCDPaquete paquetePadre = obtenerPaquete(ruta);
-			paquetePadre.getListaClases().add(tcdClaseA);
-		}
 	}
 
 	private abstracta.TCDPaquete obtenerPaquete(String ruta) {
@@ -64,50 +38,20 @@ public class TransformacionM2M {
 		return null;
 	}
 
-	private abstracta.TCDClase obtenerClaseAbstracta(String name, String ruta) {
+	private void crearPaquetes(TCDPaquete paquete) {
 
-		abstracta.TCDPaquete tcdPaquete = modelFactoryAbstracta.getListaPaquetes().get(0);
-
-		for (abstracta.TCDClase tcdClase : tcdPaquete.getListaClases()) {
-			if (tcdClase.getNombre().equalsIgnoreCase(name)) {
-				return tcdClase;
-			}
-		}
-		for (abstracta.TCDPaquete tcdPaquete2 : tcdPaquete.getListapaquetes()) {
-			abstracta.TCDClase tcdClase = obtenerClasePaquete(tcdPaquete2, name, ruta);
-			if (tcdClase != null) {
-				return tcdClase;
-			}
-		}
-		return null;
-	}
-
-	private abstracta.TCDClase obtenerClasePaquete(abstracta.TCDPaquete tcdPaquete, String name, String ruta) {
-
-		for (abstracta.TCDClase tcdClase : tcdPaquete.getListaClases()) {
-			if (tcdClase.getNombre().equals(name)) {
-				return tcdClase;
-			}
-		}
-		for (abstracta.TCDPaquete tcdPaquete2 : tcdPaquete.getListapaquetes()) {
-			abstracta.TCDClase TCDClase = obtenerClasePaquete(tcdPaquete2, name, ruta);
-			if (TCDClase != null) {
-				return TCDClase;
-			}
-		}
-
-		return null;
-	}
-
-	private void crearPaquete(TCDPaquete paquete) {
 		String ruta = paquete.getRuta() + paquete.getNombre();// a
 		String[] split = ruta.split("/");
 		abstracta.TCDPaquete paqueteParent = null;
-
-		// [root, empresa,domain,a]
+		String rutaNombrePaquete;
+		System.out.println("Lista paquetes de " + paquete.getNombre() + ": " + paquete.getListaPaquetes());
+		System.out.println("Lista clases de " + paquete.getNombre() + ": " + paquete.getListaClases());
+		
+		// [root, universidad , bienestar, a]
 		String nuevaRuta = "";
 		for (int i = 0; i < split.length; i++) {
-			String rutaNombrePaquete = split[i];
+			rutaNombrePaquete = split[i];
+			System.out.println("entre- rutaPaquete: " + rutaNombrePaquete);
 			paqueteParent = obtenerPaqueteAbstracta(rutaNombrePaquete, nuevaRuta, paqueteParent);
 			nuevaRuta += split[i] + "/";
 		}
@@ -145,4 +89,65 @@ public class TransformacionM2M {
 		return nuevoPackage;
 	}
 
+	private void crearClase(TCDClase tcdClaseC) {
+		String ruta = tcdClaseC.getRuta();// a
+		String name = tcdClaseC.getNombre();
+
+		abstracta.TCDClase claseAbstracta = obtenerClaseAbstracta(name, ruta);
+		if (claseAbstracta == null) {
+
+			abstracta.TCDClase tcdClaseA = AbstractaFactory.eINSTANCE.createTCDClase();
+			tcdClaseA.setNombre(tcdClaseC.getNombre());
+			tcdClaseA.setDocumentacion(tcdClaseC.getDocumentacion());
+			tcdClaseA.setEstereotipo(tcdClaseC.getEstereotipo());
+			tcdClaseA.setIsAbstract(tcdClaseC.isIsAbstract());
+
+			diagrama_concreta.Visibilidad visibilidadC = tcdClaseC.getModificadorAcceso();
+			if (visibilidadC.PRIVATE_VALUE == Visibilidad.PRIVATE_VALUE) {
+				tcdClaseA.setModificadorAcceso(Visibilidad.PRIVATE);
+			} else if (visibilidadC.PUBLIC_VALUE == Visibilidad.PUBLIC_VALUE) {
+				tcdClaseA.setModificadorAcceso(Visibilidad.PUBLIC);
+			} else {
+				tcdClaseA.setModificadorAcceso(Visibilidad.PROTECTED);
+			}
+
+			abstracta.TCDPaquete paquetePadre = obtenerPaquete(ruta);
+			paquetePadre.getListaClases().add(tcdClaseA);
+		}
+	}
+
+	private abstracta.TCDClase obtenerClaseAbstracta(String name, String ruta) {
+
+		abstracta.TCDPaquete tcdPaquete = modelFactoryAbstracta.getListaPaquetes().get(0);
+
+		for (abstracta.TCDClase tcdClase : tcdPaquete.getListaClases()) {
+			if (tcdClase.getNombre().equalsIgnoreCase(name)) {
+				return tcdClase;
+			}
+		}
+		for (abstracta.TCDPaquete tcdPaquete2 : tcdPaquete.getListapaquetes()) {
+			abstracta.TCDClase tcdClase = obtenerClasePaquete(tcdPaquete2, name, ruta);
+			if (tcdClase != null) {
+				return tcdClase;
+			}
+		}
+		return null;
+	}
+
+	private abstracta.TCDClase obtenerClasePaquete(abstracta.TCDPaquete tcdPaquete, String name, String ruta) {
+
+		for (abstracta.TCDClase tcdClase : tcdPaquete.getListaClases()) {
+			if (tcdClase.getNombre().equals(name)) {
+				return tcdClase;
+			}
+		}
+		for (abstracta.TCDPaquete tcdPaquete2 : tcdPaquete.getListapaquetes()) {
+			abstracta.TCDClase TCDClase = obtenerClasePaquete(tcdPaquete2, name, ruta);
+			if (TCDClase != null) {
+				return TCDClase;
+			}
+		}
+
+		return null;
+	}
 }
