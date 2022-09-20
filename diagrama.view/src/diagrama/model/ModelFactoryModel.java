@@ -2,6 +2,8 @@ package diagrama.model;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import abstracta.AbstractaFactory;
 import abstracta.AbstractaPackage;
 import abstracta.TCDPaquete;
@@ -111,7 +113,8 @@ public class ModelFactoryModel {
 		modelFactoryConcreta = cargarConcreta();
 		modelFactoryAbstracta = cargarAbstracta();
 		TransformacionM2M transformacionM2M = new TransformacionM2M(modelFactoryConcreta, modelFactoryAbstracta);
-		transformacionM2M.transformarM2M();
+		String msj = transformacionM2M.transformarM2M();
+		JOptionPane.showMessageDialog(null, msj);
 		salvarAbstracta();
 
 	}
