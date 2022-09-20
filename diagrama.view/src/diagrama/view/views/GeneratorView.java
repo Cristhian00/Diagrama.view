@@ -60,6 +60,8 @@ public class GeneratorView extends ViewPart {
 		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				ModelFactoryModel mfm = ModelFactoryModel.getInstance();
+				mfm.generarModelToText();
 			}
 		});
 		btnNewButton_1.setText("Generador de M2T");

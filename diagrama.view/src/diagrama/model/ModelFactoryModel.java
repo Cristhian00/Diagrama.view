@@ -133,6 +133,14 @@ public class ModelFactoryModel {
 		return null;
 	}
 
+	public void generarModelToText() {
+
+		modelFactoryAbstracta = cargarAbstracta();
+		TransformacionM2T transformacionM2T = new TransformacionM2T(modelFactoryAbstracta);
+		transformacionM2T.transformarM2T();
+		salvarAbstracta();
+	}
+
 	/*
 	 * private ArrayList<Object> listaRelacionesClase(String nombre) { // TODO
 	 * Auto-generated method stub ArrayList<Object> relacionsalida = new
