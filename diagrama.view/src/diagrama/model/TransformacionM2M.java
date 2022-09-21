@@ -116,7 +116,6 @@ public class TransformacionM2M {
 			tcdClaseA.setEstereotipo(tcdClaseC.getEstereotipo());
 			tcdClaseA.setIsAbstract(tcdClaseC.isIsAbstract());
 			tcdClaseA.setRuta(tcdClaseC.getRuta());
-			modelFactoryAbstracta.getListaTodasClases().add(tcdClaseA);
 
 			for (TCDAtributo tcdAtributo : tcdClaseC.getListaAtributos()) {
 				crearAtributo(tcdAtributo, tcdClaseA);
@@ -126,6 +125,7 @@ public class TransformacionM2M {
 			}
 			abstracta.TCDPaquete paquetePadre = obtenerPaquete(ruta);
 			paquetePadre.getListaClases().add(tcdClaseA);
+			modelFactoryAbstracta.getListaTodasClases().add(tcdClaseA);
 		}
 	}
 
@@ -282,7 +282,7 @@ public class TransformacionM2M {
 
 	private void relacionTCDDependencia(TCDRelacion tcdRelacionC, abstracta.TCDDependencia nuevaRelacionSource,
 			abstracta.TCDDependencia nuevaRelacionTarget) {
-		
+
 		nuevaRelacionSource.setNombreOrigen(((TCDDependencia) tcdRelacionC).getNombreOrigen());
 		nuevaRelacionSource.setNombreDestino(((TCDDependencia) tcdRelacionC).getNombreDestino());
 
@@ -292,38 +292,38 @@ public class TransformacionM2M {
 		String multiplicidadOrigen = ((TCDDependencia) tcdRelacionC).getMultiplicidadOrigen().getName();
 		String multiplicidadDestino = ((TCDDependencia) tcdRelacionC).getMultiplicidadDestino().getName();
 
-		if (multiplicidadOrigen.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadOrigen.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
 		}
 
-		if (multiplicidadDestino.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadDestino.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadDestino.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
 		}
 	}
 
 	private void relacionTCDComposicion(TCDRelacion tcdRelacionC, abstracta.TCDComposicion nuevaRelacionSource,
 			abstracta.TCDComposicion nuevaRelacionTarget) {
-		
+
 		nuevaRelacionSource.setNombreOrigen(((TCDComposicion) tcdRelacionC).getNombreOrigen());
 		nuevaRelacionSource.setNombreDestino(((TCDComposicion) tcdRelacionC).getNombreDestino());
 
@@ -333,38 +333,38 @@ public class TransformacionM2M {
 		String multiplicidadOrigen = ((TCDComposicion) tcdRelacionC).getMultiplicidadOrigen().getName();
 		String multiplicidadDestino = ((TCDComposicion) tcdRelacionC).getMultiplicidadDestino().getName();
 
-		if (multiplicidadOrigen.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadOrigen.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
 		}
 
-		if (multiplicidadDestino.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadDestino.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadDestino.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
 		}
 	}
 
 	private void relacionTCDAsociacion(TCDRelacion tcdRelacionC, abstracta.TCDAsociacion nuevaRelacionSource,
 			abstracta.TCDAsociacion nuevaRelacionTarget) {
-		
+
 		if (((TCDAsociacion) tcdRelacionC).getNavegavilidad().getName().equalsIgnoreCase("bidireccional")) {
 			((abstracta.TCDAsociacion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
 			((abstracta.TCDAsociacion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
@@ -382,38 +382,38 @@ public class TransformacionM2M {
 		String multiplicidadOrigen = ((TCDAsociacion) tcdRelacionC).getMultiplicidadOrigen().getName();
 		String multiplicidadDestino = ((TCDAsociacion) tcdRelacionC).getMultiplicidadDestino().getName();
 
-		if (multiplicidadOrigen.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadOrigen.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
 		}
 
-		if (multiplicidadDestino.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadDestino.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadDestino.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
 		}
 	}
 
 	private void relacionTCDAgregacion(TCDRelacion tcdRelacionC, abstracta.TCDAgregacion nuevaRelacionSource,
 			abstracta.TCDAgregacion nuevaRelacionTarget) {
-		
+
 		nuevaRelacionSource.setNombreOrigen(((TCDAgregacion) tcdRelacionC).getNombreOrigen());
 		nuevaRelacionSource.setNombreDestino(((TCDAgregacion) tcdRelacionC).getNombreDestino());
 
@@ -423,143 +423,32 @@ public class TransformacionM2M {
 		String multiplicidadOrigen = ((TCDAgregacion) tcdRelacionC).getMultiplicidadOrigen().getName();
 		String multiplicidadDestino = ((TCDAgregacion) tcdRelacionC).getMultiplicidadDestino().getName();
 
-		if (multiplicidadOrigen.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadOrigen.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadOrigen.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadOrigen.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
 		}
 
-		if (multiplicidadDestino.equalsIgnoreCase("UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_UNO")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-		} else if (multiplicidadDestino.equalsIgnoreCase("CERO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-		} else if (multiplicidadDestino.equalsIgnoreCase("UNO_MUCHOS")) {
-			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
-			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
+		if (multiplicidadDestino.equalsIgnoreCase("_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_1")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._01);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._01);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_0_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._0N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._0N);
+		} else if (multiplicidadDestino.equalsIgnoreCase("_1_n")) {
+			nuevaRelacionSource.setMultiplicidadDestino(abstracta.Multiplicidad._1N);
+			nuevaRelacionTarget.setMultiplicidadOrigen(abstracta.Multiplicidad._1N);
 		}
 	}
-
-	private void crearRelacionViejo(TCDRelacion tcdRelacionC) {
-
-		TCDClase RelSourceCon = tcdRelacionC.getSource();
-		TCDClase RelTargetCon = tcdRelacionC.getTarget();
-
-		abstracta.TCDClase ClaseSourceAbs = obtenerClaseAbstracta(RelSourceCon.getNombre(), RelSourceCon.getRuta());
-		abstracta.TCDClase ClaseTargetAbs = obtenerClaseAbstracta(RelTargetCon.getNombre(), RelTargetCon.getRuta());
-
-		abstracta.TCDRelacion nuevaRelacionSource = null;
-		abstracta.TCDRelacion nuevaRelacionTarget = null;
-
-		if (tcdRelacionC instanceof TCDHerencia) {
-			nuevaRelacionSource = AbstractaFactory.eINSTANCE.createTCDHerencia();
-			nuevaRelacionTarget = AbstractaFactory.eINSTANCE.createTCDHerencia();
-		} else {
-			if (tcdRelacionC instanceof TCDAgregacion) {
-				nuevaRelacionSource = AbstractaFactory.eINSTANCE.createTCDAgregacion();
-				nuevaRelacionTarget = AbstractaFactory.eINSTANCE.createTCDAgregacion();
-				relacionTCDAgregacion(tcdRelacionC, ((abstracta.TCDAgregacion) nuevaRelacionSource),
-						((abstracta.TCDAgregacion) nuevaRelacionTarget));
-			} else if (tcdRelacionC instanceof TCDAsociacion) {
-				nuevaRelacionSource = AbstractaFactory.eINSTANCE.createTCDAsociacion();
-				nuevaRelacionTarget = AbstractaFactory.eINSTANCE.createTCDAsociacion();
-				relacionTCDAsociacion(tcdRelacionC, ((abstracta.TCDAsociacion) nuevaRelacionSource),
-						((abstracta.TCDAsociacion) nuevaRelacionTarget));
-				if (((TCDAsociacion) tcdRelacionC).getNavegavilidad().getName().equalsIgnoreCase("bidireccional")) {
-					((abstracta.TCDAsociacion) nuevaRelacionSource)
-							.setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
-					((abstracta.TCDAsociacion) nuevaRelacionTarget)
-							.setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
-				} else {
-					((abstracta.TCDAsociacion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.NONE);
-					((abstracta.TCDAsociacion) nuevaRelacionTarget)
-							.setNavegavilidad(abstracta.Navegavilidad.UNIDIRECCIONAL);
-				}
-			} else if (tcdRelacionC instanceof TCDComposicion) {
-				nuevaRelacionSource = AbstractaFactory.eINSTANCE.createTCDComposicion();
-				nuevaRelacionTarget = AbstractaFactory.eINSTANCE.createTCDComposicion();
-				relacionTCDComposicion(tcdRelacionC, ((abstracta.TCDComposicion) nuevaRelacionSource),
-						((abstracta.TCDComposicion) nuevaRelacionTarget));
-			} else if (tcdRelacionC instanceof TCDDependencia) {
-				nuevaRelacionSource = AbstractaFactory.eINSTANCE.createTCDDependencia();
-				nuevaRelacionTarget = AbstractaFactory.eINSTANCE.createTCDDependencia();
-				relacionTCDDependencia(tcdRelacionC, ((abstracta.TCDDependencia) nuevaRelacionSource),
-						((abstracta.TCDDependencia) nuevaRelacionTarget));
-			}
-
-			((abstracta.TCDAsociacion) nuevaRelacionSource)
-					.setNombreOrigen(((TCDAsociacion) tcdRelacionC).getNombreOrigen());
-			((abstracta.TCDAsociacion) nuevaRelacionSource)
-					.setNombreDestino(((TCDAsociacion) tcdRelacionC).getNombreDestino());
-
-			((abstracta.TCDAsociacion) nuevaRelacionTarget)
-					.setNombreOrigen(((TCDAsociacion) tcdRelacionC).getNombreDestino());
-			((abstracta.TCDAsociacion) nuevaRelacionTarget)
-					.setNombreDestino(((TCDAsociacion) tcdRelacionC).getNombreOrigen());
-
-			String multiplicidadOrigen = ((TCDAsociacion) tcdRelacionC).getMultiplicidadOrigen().getName();
-			String multiplicidadDestino = ((TCDAsociacion) tcdRelacionC).getMultiplicidadDestino().getName();
-
-			if (multiplicidadOrigen.equalsIgnoreCase("UNO")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource).setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget).setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-			} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_UNO")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource)
-						.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget)
-						.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-			} else if (multiplicidadOrigen.equalsIgnoreCase("CERO_MUCHOS")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource)
-						.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget)
-						.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-			} else if (multiplicidadOrigen.equalsIgnoreCase("UNO_MUCHOS")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource)
-						.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget)
-						.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
-			}
-
-			if (multiplicidadDestino.equalsIgnoreCase("UNO")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource).setMultiplicidadDestino(abstracta.Multiplicidad.UNO);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget).setMultiplicidadOrigen(abstracta.Multiplicidad.UNO);
-			} else if (multiplicidadDestino.equalsIgnoreCase("CERO_UNO")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource)
-						.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_UNO);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget)
-						.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_UNO);
-			} else if (multiplicidadDestino.equalsIgnoreCase("CERO_MUCHOS")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource)
-						.setMultiplicidadDestino(abstracta.Multiplicidad.CERO_MUCHOS);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget)
-						.setMultiplicidadOrigen(abstracta.Multiplicidad.CERO_MUCHOS);
-			} else if (multiplicidadDestino.equalsIgnoreCase("UNO_MUCHOS")) {
-				((abstracta.TCDAsociacion) nuevaRelacionSource)
-						.setMultiplicidadDestino(abstracta.Multiplicidad.UNO_MUCHOS);
-				((abstracta.TCDAsociacion) nuevaRelacionTarget)
-						.setMultiplicidadOrigen(abstracta.Multiplicidad.UNO_MUCHOS);
-			}
-		}
-		nuevaRelacionSource.setSource(ClaseSourceAbs);
-		nuevaRelacionSource.setTarget(ClaseTargetAbs);
-
-		nuevaRelacionTarget.setSource(ClaseTargetAbs);
-		nuevaRelacionTarget.setTarget(ClaseSourceAbs);
-
-		ClaseSourceAbs.getListaRelaciones().add(nuevaRelacionSource);
-		ClaseTargetAbs.getListaRelaciones().add(nuevaRelacionTarget);
-	}
-
 }
