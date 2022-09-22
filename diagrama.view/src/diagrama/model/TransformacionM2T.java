@@ -34,9 +34,11 @@ public class TransformacionM2T {
 		String pathRaiz = "";
 		StringBuilder textoCodigo = new StringBuilder();
 
-		DirectoryDialog fd = new DirectoryDialog(new Shell(), SWT.SELECTED);
-		fd.setText("Generacion de codigo");
-		pathRaiz = fd.open();
+//		DirectoryDialog fd = new DirectoryDialog(new Shell(), SWT.SELECTED);
+//		fd.setText("Generacion de codigo");
+//		pathRaiz = fd.open();
+		pathRaiz = "C:\\Users\\crist\\Desktop\\Semestre 10\\Ingenieria de software\\Codigo clases";
+		System.out.println("Ruta: " + pathRaiz);
 
 		for (TCDClase tcdClase : modelFactoryAbstracta.getListaTodasClases()) {
 			// crear las clases
@@ -71,9 +73,9 @@ public class TransformacionM2T {
 
 	private void agregarAtributos(TCDClase tcdClase, StringBuilder textoCodigo) {
 
+		// Lista todos los atriutos de cada clase y los agrega
 		String multiplicidad;
 		for (TCDAtributo atributo : tcdClase.getListaAtributos()) {
-			// public name: string;
 			textoCodigo.append("\t" + atributo.getVisibilidad().getName().toLowerCase() + " " + atributo.getNombre()
 					+ ": " + atributo.getTipoDato().getName().toLowerCase());
 			if (atributo.getValorDefecto() != null) {
@@ -86,53 +88,51 @@ public class TransformacionM2T {
 				textoCodigo.append(";\n");
 			}
 		}
-		textoCodigo.append("\n");
-		for (TCDRelacion relacion : tcdClase.getListaRelaciones()) {
-			// private mascota: Mascota[];
-			// private mascota: Mascota;
-			if (!(relacion instanceof TCDHerencia)) {
-				multiplicidad = "";
+
+		// Lista Todas las relaciones que tiene la clase, exceptuando la de herencia, y las agrega
+		ArrayList<TCDRelacion> relaciones = obtenerRelaciones(tcdClase);
+		for (TCDRelacion relacion : relaciones) {
+			multiplicidad = "";
+			if (relacion instanceof TCDAgregacion) {
 				textoCodigo.append("\tprivate ");
-				if (relacion instanceof TCDAgregacion) {
-					textoCodigo.append(((TCDAgregacion) relacion).getNombreDestino() + ": "
-							+ ((TCDAgregacion) relacion).getTarget().getNombre());
-					multiplicidad = ((TCDAgregacion) relacion).getMultiplicidadDestino().getName();
-				} else if (relacion instanceof TCDAsociacion) {
-					if (((TCDAsociacion) relacion).getNavegavilidad().getName().equalsIgnoreCase("none")) {
-						break;
-					}
-					textoCodigo.append(((TCDAsociacion) relacion).getNombreDestino() + ": "
-							+ ((TCDAsociacion) relacion).getTarget().getNombre());
-					multiplicidad = ((TCDAsociacion) relacion).getMultiplicidadDestino().getName();
-				} else if (relacion instanceof TCDComposicion) {
-					textoCodigo.append(((TCDComposicion) relacion).getNombreDestino() + ": "
-							+ ((TCDComposicion) relacion).getTarget().getNombre());
-					multiplicidad = ((TCDComposicion) relacion).getMultiplicidadDestino().getName();
-				} else if (relacion instanceof TCDDependencia) {
-					textoCodigo.append(((TCDDependencia) relacion).getNombreDestino() + ": "
-							+ ((TCDDependencia) relacion).getTarget().getNombre());
-					multiplicidad = ((TCDDependencia) relacion).getMultiplicidadDestino().getName();
+				textoCodigo.append(((TCDAgregacion) relacion).getNombreDestino() + ": "
+						+ ((TCDAgregacion) relacion).getTarget().getNombre());
+				multiplicidad = ((TCDAgregacion) relacion).getMultiplicidadDestino().getName();
+			} else if (relacion instanceof TCDAsociacion) {
+				if (((TCDAsociacion) relacion).getNavegavilidad().getName().equalsIgnoreCase("none")) {
+					break;
 				}
-				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
-					textoCodigo.append(";\n");
-				} else if (multiplicidad.equalsIgnoreCase("_0_n") || multiplicidad.equalsIgnoreCase("_1_n")) {
-					textoCodigo.append("[];\n");
-				}
+				textoCodigo.append("\tprivate " + ((TCDAsociacion) relacion).getNombreDestino() + ": "
+						+ ((TCDAsociacion) relacion).getTarget().getNombre());
+				multiplicidad = ((TCDAsociacion) relacion).getMultiplicidadDestino().getName();
+			} else if (relacion instanceof TCDComposicion) {
+				textoCodigo.append("\tprivate " + ((TCDComposicion) relacion).getNombreDestino() + ": "
+						+ ((TCDComposicion) relacion).getTarget().getNombre());
+				multiplicidad = ((TCDComposicion) relacion).getMultiplicidadDestino().getName();
+			} else if (relacion instanceof TCDDependencia) {
+				textoCodigo.append("\tprivate " + ((TCDDependencia) relacion).getNombreDestino() + ": "
+						+ ((TCDDependencia) relacion).getTarget().getNombre());
+				multiplicidad = ((TCDDependencia) relacion).getMultiplicidadDestino().getName();
+			}
+			// Agrega un ; si es una clase de multiplicidad 1 o unos corchetes si es n
+			if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+				textoCodigo.append(";\n");
+			} else if (multiplicidad.equalsIgnoreCase("_0_n") || multiplicidad.equalsIgnoreCase("_1_n")) {
+				textoCodigo.append("[];\n");
 			}
 		}
 		textoCodigo.append("\n");
 	}
 
 	private void agregarConstructor(TCDClase tcdClase, StringBuilder textoCodigo) {
-		// constructor(name: string, email:string, age: number, peso: number) {
-		// super(name, email, age, peso);
-		// this.mascota = [];
-		// }
+		
 		TCDAtributo atributo;
-
-		textoCodigo.append("\tconstructor (");
-		TCDClase claseSuper = clasePadre(tcdClase);
 		EList<TCDAtributo> allAtributos;
+		TCDClase claseSuper = clasePadre(tcdClase);
+		textoCodigo.append("\tconstructor (");
+		
+		// Pregunta si la clase hereda de otra para agregar los atributos de la clase padre
+		// en los parametros de la clase hija
 		if (claseSuper != null) {
 			System.out.println("clase " + tcdClase.getNombre() + " extends " + claseSuper.getNombre());
 			for (TCDAtributo attr : claseSuper.getListaAtributos()) {
@@ -146,15 +146,53 @@ public class TransformacionM2T {
 		} else {
 			allAtributos = tcdClase.getListaAtributos();
 		}
+
+		// Agrega en los parametros todos los atributos que necesita la clase 
 		for (int i = 0; i < allAtributos.size(); i++) {
 			atributo = allAtributos.get(i);
 			if (i == allAtributos.size() - 1) {
-				textoCodigo.append(atributo.getNombre() + ": " + atributo.getTipoDato() + ") {\n");
+				textoCodigo.append(atributo.getNombre() + ": " + atributo.getTipoDato());
 			} else {
 				textoCodigo.append(atributo.getNombre() + ": " + atributo.getTipoDato() + ", ");
 			}
 		}
 
+		// Obtiene las relaciones que tenga la clase para saber si las agrega como parametros
+		// del construtor
+		ArrayList<TCDRelacion> relaciones = obtenerRelaciones(tcdClase);
+		TCDRelacion relacionAux;
+		String multiplicidad;
+		for (int i = 0; i < relaciones.size(); i++) {
+			relacionAux = relaciones.get(i);
+			if (relacionAux instanceof TCDAgregacion) {
+				multiplicidad = ((TCDAgregacion) relacionAux).getMultiplicidadDestino().getName();
+				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+					textoCodigo.append(", " + ((TCDAgregacion) relacionAux).getTarget().getNombre() + ": ");
+					textoCodigo.append(((TCDAgregacion) relacionAux).getNombreDestino());
+				}
+			} else if (relacionAux instanceof TCDAsociacion) {
+				multiplicidad = ((TCDAsociacion) relacionAux).getMultiplicidadDestino().getName();
+				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+					textoCodigo.append(", " + ((TCDAsociacion) relacionAux).getTarget().getNombre() + ": ");
+					textoCodigo.append(((TCDAsociacion) relacionAux).getNombreDestino());
+				}
+			} else if (relacionAux instanceof TCDComposicion) {
+				multiplicidad = ((TCDComposicion) relacionAux).getMultiplicidadDestino().getName();
+				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+					textoCodigo.append(", " + ((TCDComposicion) relacionAux).getTarget().getNombre() + ": ");
+					textoCodigo.append(((TCDComposicion) relacionAux).getNombreDestino());
+				}
+			} else if (relacionAux instanceof TCDDependencia) {
+				multiplicidad = ((TCDDependencia) relacionAux).getMultiplicidadDestino().getName();
+				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+					textoCodigo.append(", " + ((TCDDependencia) relacionAux).getTarget().getNombre() + ": ");
+					textoCodigo.append(((TCDDependencia) relacionAux).getNombreDestino());
+				}
+			}
+		}
+		textoCodigo.append(") {\n");
+
+		// Si la clase heredo de otra agregar el metodo super con los parametros de la clase padre
 		if (claseSuper != null) {
 			textoCodigo.append("\t\tsuper(");
 			TCDAtributo atributoSuper;
@@ -168,12 +206,70 @@ public class TransformacionM2T {
 				}
 			}
 		}
+		
+		// Agrega los atributos propios de la clase y los inicializa en el construtor
 		TCDAtributo atributoAUx;
 		for (int i = 0; i < tcdClase.getListaAtributos().size(); i++) {
 			atributoAUx = tcdClase.getListaAtributos().get(i);
 			textoCodigo.append("\t\tthis." + atributoAUx.getNombre() + " = " + atributoAUx.getNombre() + ";\n");
 		}
-		textoCodigo.append("\t}");
+
+		// Agrega las relaciones que tiene la clase e inicializa con las que vienen por 
+		// parametro y las listas las inicializa con []
+		for (TCDRelacion relacion : tcdClase.getListaRelaciones()) {
+			if (!(relacion instanceof TCDHerencia)) {
+				multiplicidad = "";
+				textoCodigo.append("\t\tthis.");
+				if (relacion instanceof TCDAgregacion) {
+					textoCodigo.append(((TCDAgregacion) relacion).getNombreDestino() + " = ");
+					multiplicidad = ((TCDAgregacion) relacion).getMultiplicidadDestino().getName();
+					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+						textoCodigo.append(((TCDAgregacion) relacion).getNombreDestino() + ";\n");
+					}
+				} else if (relacion instanceof TCDAsociacion) {
+					textoCodigo.append(((TCDAsociacion) relacion).getNombreDestino() + " = ");
+					multiplicidad = ((TCDAsociacion) relacion).getMultiplicidadDestino().getName();
+					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+						textoCodigo.append(((TCDAsociacion) relacion).getNombreDestino() + ";\n");
+					}
+				} else if (relacion instanceof TCDComposicion) {
+					textoCodigo.append(((TCDComposicion) relacion).getNombreDestino() + " = ");
+					multiplicidad = ((TCDComposicion) relacion).getMultiplicidadDestino().getName();
+					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+						textoCodigo.append(((TCDComposicion) relacion).getNombreDestino() + ";\n");
+					}
+				} else if (relacion instanceof TCDDependencia) {
+					textoCodigo.append(((TCDDependencia) relacion).getNombreDestino() + " = ");
+					multiplicidad = ((TCDDependencia) relacion).getMultiplicidadDestino().getName();
+					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+						textoCodigo.append(((TCDDependencia) relacion).getNombreDestino() + ";\n");
+					}
+				}
+				if (multiplicidad.equalsIgnoreCase("_0_n") || multiplicidad.equalsIgnoreCase("_1_n")) {
+					textoCodigo.append("[];\n");
+				}
+			}
+		}
+		textoCodigo.append("\t}\n\n");
+	}
+
+	private ArrayList<TCDRelacion> obtenerRelaciones(TCDClase tcdClase) {
+		ArrayList<TCDRelacion> relaciones = new ArrayList<>();
+
+		for (TCDRelacion relacion : tcdClase.getListaRelaciones()) {
+			if (!(relacion instanceof TCDHerencia)) {
+				if (relacion instanceof TCDAgregacion) {
+					relaciones.add(((TCDAgregacion) relacion));
+				} else if (relacion instanceof TCDAsociacion) {
+					relaciones.add(((TCDAsociacion) relacion));
+				} else if (relacion instanceof TCDComposicion) {
+					relaciones.add(((TCDComposicion) relacion));
+				} else if (relacion instanceof TCDDependencia) {
+					relaciones.add(((TCDDependencia) relacion));
+				}
+			}
+		}
+		return relaciones;
 	}
 
 	private TCDClase clasePadre(TCDClase tcdClase) {
