@@ -1,8 +1,10 @@
 package diagrama.model;
 
 import abstracta.AbstractaFactory;
+import abstracta.ModificadorAcceso;
 import abstracta.TipoDato;
 import abstracta.TipoRetorno;
+import abstracta.TipoVariable;
 import abstracta.Visibilidad;
 import diagrama_concreta.ModelFactory;
 import diagrama_concreta.TCDAgregacion;
@@ -143,17 +145,10 @@ public class TransformacionM2M {
 			tcdAtributoA.setTipoDato(TipoDato.UNDEFINED);
 		} else if (tcdAtributoC.getTipoDato().getName().equalsIgnoreCase("null")) {
 			tcdAtributoA.setTipoDato(TipoDato.NULL);
+		} else if (tcdAtributoC.getTipoDato().getName().equalsIgnoreCase("void")) {
+			tcdAtributoA.setTipoDato(TipoDato.VOID);
 		}
-		if (tcdAtributoC.getVisibilidad().getName().equalsIgnoreCase("public")) {
-			tcdAtributoA.setVisibilidad(Visibilidad.PUBLIC);
-		} else if (tcdAtributoC.getVisibilidad().getName().equalsIgnoreCase("private")) {
-			tcdAtributoA.setVisibilidad(Visibilidad.PRIVATE);
-		} else if (tcdAtributoC.getVisibilidad().getName().equalsIgnoreCase("protected")) {
-			tcdAtributoA.setVisibilidad(Visibilidad.PROTECTED);
-		} else if (tcdAtributoC.getVisibilidad().getName().equalsIgnoreCase("readonly")) {
-			tcdAtributoA.setVisibilidad(Visibilidad.READONLY);
-		}
-		tcdAtributoA.setIsConstante(tcdAtributoC.isIsConstante());
+		
 		tcdAtributoA.setValorDefecto(tcdAtributoC.getValorDefecto());
 
 		tcdClaseA.getListaAtributos().add(tcdAtributoA);
@@ -181,7 +176,10 @@ public class TransformacionM2M {
 			tcdMetodoA.setTipoRetorno(TipoRetorno.BOOLEAN);
 		} else if (tcdMetodoC.getTipoRetorno().getName().equalsIgnoreCase("undefined")) {
 			tcdMetodoA.setTipoRetorno(TipoRetorno.UNDEFINED);
+		} else if (tcdMetodoC.getTipoRetorno().getName().equalsIgnoreCase("void")) {
+			tcdMetodoA.setTipoRetorno(TipoRetorno.VOID);
 		}
+		
 		tcdMetodoA.setSemantica(tcdMetodoC.getSemantica());
 		tcdMetodoA.getListaParametros().addAll(tcdMetodoC.getListaParametros());
 
@@ -237,7 +235,6 @@ public class TransformacionM2M {
 
 		TCDClase RelSourceCon = tcdRelacionC.getSource();
 		TCDClase RelTargetCon = tcdRelacionC.getTarget();
-
 		abstracta.TCDClase ClaseSourceAbs = obtenerClaseAbstracta(RelSourceCon.getNombre(), RelSourceCon.getRuta());
 		abstracta.TCDClase ClaseTargetAbs = obtenerClaseAbstracta(RelTargetCon.getNombre(), RelTargetCon.getRuta());
 
@@ -247,6 +244,15 @@ public class TransformacionM2M {
 		if (tcdRelacionC instanceof TCDHerencia) {
 			nuevaRelacionSource = AbstractaFactory.eINSTANCE.createTCDHerencia();
 			nuevaRelacionTarget = AbstractaFactory.eINSTANCE.createTCDHerencia();
+			
+			nuevaRelacionSource.setSource(ClaseSourceAbs);
+			nuevaRelacionSource.setTarget(ClaseTargetAbs);
+
+			nuevaRelacionTarget.setSource(ClaseSourceAbs);
+			nuevaRelacionTarget.setTarget(ClaseTargetAbs);
+			
+			ClaseSourceAbs.getListaRelaciones().add(nuevaRelacionSource);
+			ClaseTargetAbs.getListaRelaciones().add(nuevaRelacionTarget);
 		} else {
 			if (tcdRelacionC instanceof TCDAgregacion) {
 				nuevaRelacionSource = AbstractaFactory.eINSTANCE.createTCDAgregacion();
@@ -269,15 +275,15 @@ public class TransformacionM2M {
 				relacionTCDDependencia(tcdRelacionC, ((abstracta.TCDDependencia) nuevaRelacionSource),
 						((abstracta.TCDDependencia) nuevaRelacionTarget));
 			}
+			nuevaRelacionSource.setSource(ClaseSourceAbs);
+			nuevaRelacionSource.setTarget(ClaseTargetAbs);
+
+			nuevaRelacionTarget.setSource(ClaseTargetAbs);
+			nuevaRelacionTarget.setTarget(ClaseSourceAbs);
+
+			ClaseSourceAbs.getListaRelaciones().add(nuevaRelacionSource);
+			ClaseTargetAbs.getListaRelaciones().add(nuevaRelacionTarget);
 		}
-		nuevaRelacionSource.setSource(ClaseSourceAbs);
-		nuevaRelacionSource.setTarget(ClaseTargetAbs);
-
-		nuevaRelacionTarget.setSource(ClaseTargetAbs);
-		nuevaRelacionTarget.setTarget(ClaseSourceAbs);
-
-		ClaseSourceAbs.getListaRelaciones().add(nuevaRelacionSource);
-		ClaseTargetAbs.getListaRelaciones().add(nuevaRelacionTarget);
 	}
 
 	private void relacionTCDDependencia(TCDRelacion tcdRelacionC, abstracta.TCDDependencia nuevaRelacionSource,
@@ -369,8 +375,8 @@ public class TransformacionM2M {
 			((abstracta.TCDAsociacion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
 			((abstracta.TCDAsociacion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
 		} else {
-			((abstracta.TCDAsociacion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.NONE);
-			((abstracta.TCDAsociacion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.UNIDIRECCIONAL);
+			((abstracta.TCDAsociacion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.UNIDIRECCIONAL);
+			((abstracta.TCDAsociacion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.NONE);
 		}
 
 		nuevaRelacionSource.setNombreOrigen(((TCDAsociacion) tcdRelacionC).getNombreOrigen());

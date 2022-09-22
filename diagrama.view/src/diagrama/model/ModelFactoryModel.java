@@ -140,8 +140,8 @@ public class ModelFactoryModel {
 
 		modelFactoryAbstracta = cargarAbstracta();
 		TransformacionM2T transformacionM2T = new TransformacionM2T(modelFactoryAbstracta);
-		transformacionM2T.transformarM2T();
-		salvarAbstracta();
+		String msj = transformacionM2T.transformarM2T();
+		JOptionPane.showMessageDialog(null, msj);
 	}
 
 	/*
