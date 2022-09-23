@@ -1,23 +1,10 @@
 package diagrama.model;
 
-import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
 
-import abstracta.AbstractaFactory;
 import abstracta.AbstractaPackage;
-import abstracta.TCDPaquete;
-import diagrama_concreta.Diagrama_concretaFactory;
 import diagrama_concreta.Diagrama_concretaPackage;
 import diagrama_concreta.ModelFactory;
-import diagrama_concreta.TCDAgregacion;
-import diagrama_concreta.TCDAsociacion;
-import diagrama_concreta.TCDClase;
-import diagrama_concreta.TCDComposicion;
-import diagrama_concreta.TCDDependencia;
-import diagrama_concreta.TCDDiagramaClases;
-import diagrama_concreta.TCDHerencia;
-import diagrama_concreta.TCDRelacion;
 
 public class ModelFactoryModel {
 
@@ -102,7 +89,6 @@ public class ModelFactoryModel {
 		try {
 			resource.save(java.util.Collections.EMPTY_MAP);
 		} catch (java.io.IOException e) {
-			// TO-DO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return;
@@ -116,24 +102,6 @@ public class ModelFactoryModel {
 		String msj = transformacionM2M.transformarM2M();
 		JOptionPane.showMessageDialog(null, msj);
 		salvarAbstracta();
-
-	}
-
-	public void crearPaquete(diagrama_concreta.TCDPaquete paquete) {
-
-		String ruta = paquete.getRuta();
-		String[] split = ruta.split("/");
-		String nombrePaquete;
-		diagrama_concreta.TCDPaquete paqueteAux;
-		for (int i = 0; i < split.length; i++) {
-			nombrePaquete = split[0];
-			paqueteAux = obtenerPaquete(nombrePaquete);
-		}
-	}
-
-	private diagrama_concreta.TCDPaquete obtenerPaquete(String nombrePaquete) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public void generarModelToText() {
@@ -143,43 +111,5 @@ public class ModelFactoryModel {
 		String msj = transformacionM2T.transformarM2T();
 		JOptionPane.showMessageDialog(null, msj);
 	}
-
-	/*
-	 * private ArrayList<Object> listaRelacionesClase(String nombre) { // TODO
-	 * Auto-generated method stub ArrayList<Object> relacionsalida = new
-	 * ArrayList<>(); for (TCDDiagramaClases diagrama :
-	 * modelFactory.getListaDiagramas()) { for (TCDRelacion relaciones :
-	 * diagrama.getListaRelaciones()) { if (relaciones.getSource().equals(nombre)) {
-	 * relacionsalida.add(relaciones.getSource()); } }
-	 * 
-	 * for (TCDRelacion relaciones : diagrama.getListaRelaciones()) { if
-	 * (relaciones.getSource() instanceof TCDComposicion) {
-	 * relacionsalida.add(relaciones.getSource()); } } for (TCDRelacion relaciones :
-	 * diagrama.getListaRelaciones()) { if (relaciones.getSource() instanceof
-	 * TCDAsociacion) { relacionsalida.add(relaciones.getSource()); } } for
-	 * (TCDRelacion relaciones : diagrama.getListaRelaciones()) { if
-	 * (relaciones.getSource() instanceof TCDDependencia) {
-	 * relacionsalida.add(relaciones.getSource()); } } for (TCDRelacion relaciones :
-	 * diagrama.getListaRelaciones()) { if (relaciones.getSource() instanceof
-	 * TCDAgregacion) { relacionsalida.add(relaciones.getSource()); } } for
-	 * (TCDRelacion relaciones : diagrama.getListaRelaciones()) { if
-	 * (relaciones.getSource() instanceof TCDHerencia) {
-	 * relacionsalida.add(relaciones.getSource()); } }
-	 * 
-	 * } return relacionsalida; }
-	 */
-
-	/*
-	 * private TCDClase obtenerClase(String nombre) { // TODO Auto-generated method
-	 * stub TCDClase clase = null; for (TCDDiagramaClases diagrama :
-	 * modelFactory.getListaDiagramas()) {
-	 * System.out.println("Diagramas de clases: " + diagrama.getNombre() + "\n");
-	 * for (TCDClase clases : diagrama.getListaClases()) { if
-	 * (clases.getNombre().equals(nombre)) { return clases; }
-	 * 
-	 * } }
-	 * 
-	 * return clase; }
-	 */
 
 }

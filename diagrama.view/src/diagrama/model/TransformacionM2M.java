@@ -1,10 +1,8 @@
 package diagrama.model;
 
 import abstracta.AbstractaFactory;
-import abstracta.ModificadorAcceso;
 import abstracta.TipoDato;
 import abstracta.TipoRetorno;
-import abstracta.TipoVariable;
 import abstracta.Visibilidad;
 import diagrama_concreta.ModelFactory;
 import diagrama_concreta.TCDAgregacion;
