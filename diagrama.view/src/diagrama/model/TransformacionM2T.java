@@ -3,6 +3,7 @@ package diagrama.model;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.emf.common.util.EList;
 import abstracta.ModelFactory;
@@ -62,12 +63,39 @@ public class TransformacionM2T {
 		System.out.println("---Relaciones para imports---");
 		TCDClase claseRelacion;
 		int nivel = 0;
-		for (TCDRelacion relacion : tcdClase.getListaRelaciones()) {
-			System.out.println(tcdClase.getNombre() + ": " + relacion.getTarget().getNombre());
-			claseRelacion = relacion.getTarget();
-			nivel = calcularDiferencia(tcdClase, claseRelacion);
-		}
 
+		for (TCDRelacion relacion : tcdClase.getListaRelaciones()) {
+			if (relacion instanceof TCDHerencia) {
+				if (relacion.getSource().getNombre().equals(tcdClase.getNombre())) {
+					continue;
+				}
+				System.out.println(tcdClase.getNombre() + "<--->" + relacion.getSource().getNombre());
+				claseRelacion = relacion.getSource();
+			} else {
+				System.out.println(tcdClase.getNombre() + "<--->" + relacion.getTarget().getNombre());
+				claseRelacion = relacion.getTarget();
+			}
+
+			txtCodigo.append("import { " + claseRelacion.getNombre() + " } from \"");
+			nivel = calcularDiferencia(tcdClase, claseRelacion);
+			if (nivel == 0) {
+				rutasSinDiferencia(tcdClase, claseRelacion, tcdClase.getRuta().split("/"),
+						claseRelacion.getRuta().split("/"), txtCodigo, true);
+			} else if (nivel > 0) {
+				String[] rutaNew = tcdClase.getRuta().split("/");
+				while (nivel != 0) {
+					txtCodigo.append("../");
+					rutaNew = Arrays.copyOf(rutaNew, rutaNew.length - 1);
+					nivel--;
+				}
+				rutasSinDiferencia(tcdClase, claseRelacion, rutaNew, claseRelacion.getRuta().split("/"), txtCodigo,
+						false);
+			} else if (nivel < 0) {
+				System.out.println("Diferencia de nivel: " + nivel + "\n");
+				txtCodigo.append("// el nivel es " + nivel + "\n");
+			}
+		}
+		txtCodigo.append("\n");
 	}
 
 	private int calcularDiferencia(TCDClase tcdClase, TCDClase claseRelacion) {
@@ -77,9 +105,33 @@ public class TransformacionM2T {
 		String[] rutaClase1 = tcdClase.getRuta().split("/");
 		String[] rutaClase2 = claseRelacion.getRuta().split("/");
 		int diferencia = rutaClase1.length - rutaClase2.length;
-		System.out.println("Diferencia de nivel: " + diferencia);
 
 		return diferencia;
+	}
+
+	private void rutasSinDiferencia(TCDClase tcdClase, TCDClase claseRelacion, String[] rutaClase1, String[] rutaClase2,
+			StringBuilder txtCodigo, boolean mismoNivel) {
+
+		if (rutasIguales(rutaClase1, rutaClase2)) {
+			// import { Horario } from "./Horario";
+			if (mismoNivel) {
+				txtCodigo.append("./");
+			}
+			txtCodigo.append(claseRelacion.getNombre() + "\";\n");
+		} else {
+			String finRuta = rutaClase2[rutaClase2.length - 1];
+			// import { Bienestar } from "../bienestar/Bienestar";
+			txtCodigo.append("../" + finRuta + "/" + claseRelacion.getNombre() + "\";\n");
+		}
+	}
+
+	private boolean rutasIguales(String[] rutaClase1, String[] rutaClase2) {
+		for (int i = 0; i < rutaClase1.length; i++) {
+			if (!rutaClase1[i].equals(rutaClase2[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void agregarEncabezado(TCDClase tcdClase, StringBuilder txtCodigo) {
@@ -88,7 +140,7 @@ public class TransformacionM2T {
 		if (tcdClase.isIsAbstract()) {
 			txtCodigo.append("abstract ");
 		}
-		txtCodigo.append(" class " + tcdClase.getNombre());
+		txtCodigo.append("class " + tcdClase.getNombre());
 		for (TCDRelacion relacion : tcdClase.getListaRelaciones()) {
 			if (relacion instanceof TCDHerencia) {
 				if (!relacion.getSource().getNombre().equals(tcdClase.getNombre())) {
@@ -129,11 +181,12 @@ public class TransformacionM2T {
 				multiplicidad = ((TCDAgregacion) relacion).getMultiplicidadDestino().getName();
 			} else if (relacion instanceof TCDAsociacion) {
 				if (((TCDAsociacion) relacion).getNavegavilidad().getName().equalsIgnoreCase("none")) {
-					break;
+					continue;
+				} else {
+					txtCodigo.append("\tprivate " + ((TCDAsociacion) relacion).getNombreDestino() + ": "
+							+ ((TCDAsociacion) relacion).getTarget().getNombre());
+					multiplicidad = ((TCDAsociacion) relacion).getMultiplicidadDestino().getName();
 				}
-				txtCodigo.append("\tprivate " + ((TCDAsociacion) relacion).getNombreDestino() + ": "
-						+ ((TCDAsociacion) relacion).getTarget().getNombre());
-				multiplicidad = ((TCDAsociacion) relacion).getMultiplicidadDestino().getName();
 			} else if (relacion instanceof TCDComposicion) {
 				txtCodigo.append("\tprivate " + ((TCDComposicion) relacion).getNombreDestino() + ": "
 						+ ((TCDComposicion) relacion).getTarget().getNombre());
@@ -203,33 +256,47 @@ public class TransformacionM2T {
 		ArrayList<TCDRelacion> relaciones = obtenerRelaciones(tcdClase);
 		TCDRelacion relacionAux;
 		String multiplicidad;
+		char ultimoCaracter = txtCodigo.charAt(txtCodigo.length() - 1);
 		for (int i = 0; i < relaciones.size(); i++) {
 			relacionAux = relaciones.get(i);
 			if (relacionAux instanceof TCDAgregacion) {
 				multiplicidad = ((TCDAgregacion) relacionAux).getMultiplicidadDestino().getName();
 				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
-					txtCodigo.append(", " + ((TCDAgregacion) relacionAux).getNombreDestino() + ": ");
+					if (ultimoCaracter != '(') {
+						txtCodigo.append(", ");
+					}
+					txtCodigo.append(((TCDAgregacion) relacionAux).getNombreDestino() + ": ");
 					txtCodigo.append(((TCDAgregacion) relacionAux).getTarget().getNombre());
 				}
 			} else if (relacionAux instanceof TCDAsociacion) {
 				if (((TCDAsociacion) relacionAux).getNavegavilidad().getName().equalsIgnoreCase("none")) {
-					break;
-				}
-				multiplicidad = ((TCDAsociacion) relacionAux).getMultiplicidadDestino().getName();
-				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
-					txtCodigo.append(", " + ((TCDAsociacion) relacionAux).getNombreDestino() + ": ");
-					txtCodigo.append(((TCDAsociacion) relacionAux).getTarget().getNombre());
+					continue;
+				} else {
+					multiplicidad = ((TCDAsociacion) relacionAux).getMultiplicidadDestino().getName();
+					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+						if (ultimoCaracter != '(') {
+							txtCodigo.append(", ");
+						}
+						txtCodigo.append(((TCDAsociacion) relacionAux).getNombreDestino() + ": ");
+						txtCodigo.append(((TCDAsociacion) relacionAux).getTarget().getNombre());
+					}
 				}
 			} else if (relacionAux instanceof TCDComposicion) {
 				multiplicidad = ((TCDComposicion) relacionAux).getMultiplicidadDestino().getName();
 				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
-					txtCodigo.append(", " + ((TCDComposicion) relacionAux).getNombreDestino() + ": ");
+					if (ultimoCaracter != '(') {
+						txtCodigo.append(", ");
+					}
+					txtCodigo.append(((TCDComposicion) relacionAux).getNombreDestino() + ": ");
 					txtCodigo.append(((TCDComposicion) relacionAux).getTarget().getNombre());
 				}
 			} else if (relacionAux instanceof TCDDependencia) {
 				multiplicidad = ((TCDDependencia) relacionAux).getMultiplicidadDestino().getName();
 				if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
-					txtCodigo.append(", " + ((TCDDependencia) relacionAux).getNombreDestino() + ": ");
+					if (ultimoCaracter != '(') {
+						txtCodigo.append(", ");
+					}
+					txtCodigo.append(((TCDDependencia) relacionAux).getNombreDestino() + ": ");
 					txtCodigo.append(((TCDDependencia) relacionAux).getTarget().getNombre());
 				}
 			}
@@ -268,8 +335,8 @@ public class TransformacionM2T {
 		for (TCDRelacion relacion : tcdClase.getListaRelaciones()) {
 			if (!(relacion instanceof TCDHerencia)) {
 				multiplicidad = "";
-				txtCodigo.append("\t\tthis.");
 				if (relacion instanceof TCDAgregacion) {
+					txtCodigo.append("\t\tthis.");
 					txtCodigo.append(((TCDAgregacion) relacion).getNombreDestino() + " = ");
 					multiplicidad = ((TCDAgregacion) relacion).getMultiplicidadDestino().getName();
 					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
@@ -277,20 +344,24 @@ public class TransformacionM2T {
 					}
 				} else if (relacion instanceof TCDAsociacion) {
 					if (((TCDAsociacion) relacion).getNavegavilidad().getName().equalsIgnoreCase("none")) {
-						break;
-					}
-					txtCodigo.append(((TCDAsociacion) relacion).getNombreDestino() + " = ");
-					multiplicidad = ((TCDAsociacion) relacion).getMultiplicidadDestino().getName();
-					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
-						txtCodigo.append(((TCDAsociacion) relacion).getNombreDestino() + ";\n");
+						continue;
+					} else {
+						txtCodigo.append("\t\tthis.");
+						txtCodigo.append(((TCDAsociacion) relacion).getNombreDestino() + " = ");
+						multiplicidad = ((TCDAsociacion) relacion).getMultiplicidadDestino().getName();
+						if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
+							txtCodigo.append(((TCDAsociacion) relacion).getNombreDestino() + ";\n");
+						}
 					}
 				} else if (relacion instanceof TCDComposicion) {
+					txtCodigo.append("\t\tthis.");
 					txtCodigo.append(((TCDComposicion) relacion).getNombreDestino() + " = ");
 					multiplicidad = ((TCDComposicion) relacion).getMultiplicidadDestino().getName();
 					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
 						txtCodigo.append(((TCDComposicion) relacion).getNombreDestino() + ";\n");
 					}
 				} else if (relacion instanceof TCDDependencia) {
+					txtCodigo.append("\t\tthis.");
 					txtCodigo.append(((TCDDependencia) relacion).getNombreDestino() + " = ");
 					multiplicidad = ((TCDDependencia) relacion).getMultiplicidadDestino().getName();
 					if (multiplicidad.equalsIgnoreCase("_1") || multiplicidad.equalsIgnoreCase("_0_1")) {
@@ -328,7 +399,7 @@ public class TransformacionM2T {
 					}
 				} else if (relacion3 instanceof TCDAsociacion) {
 					if (((TCDAsociacion) relacion3).getNavegavilidad().getName().equalsIgnoreCase("none")) {
-						break;
+						continue;
 					}
 					if (((TCDAsociacion) relacion3).getMultiplicidadDestino() == Multiplicidad._1
 							|| ((TCDAsociacion) relacion3).getMultiplicidadDestino() == Multiplicidad._01) {
@@ -403,7 +474,7 @@ public class TransformacionM2T {
 				}
 			} else if (tcdRelacion instanceof TCDAsociacion) {
 				if (((TCDAsociacion) tcdRelacion).getNavegavilidad().getName().equalsIgnoreCase("none")) {
-					break;
+					continue;
 				}
 				multiplicidad = ((TCDAsociacion) tcdRelacion).getMultiplicidadDestino().getName();
 				nombre = ((TCDAsociacion) tcdRelacion).getNombreDestino().toUpperCase().charAt(0)
