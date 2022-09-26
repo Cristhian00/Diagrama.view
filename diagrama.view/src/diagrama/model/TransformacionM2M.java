@@ -287,6 +287,14 @@ public class TransformacionM2M {
 	private void relacionTCDDependencia(TCDRelacion tcdRelacionC, abstracta.TCDDependencia nuevaRelacionSource,
 			abstracta.TCDDependencia nuevaRelacionTarget) {
 
+		if (((TCDDependencia) tcdRelacionC).getNavegavilidad().getName().equalsIgnoreCase("bidireccional")) {
+			((abstracta.TCDDependencia) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
+			((abstracta.TCDDependencia) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
+		} else {
+			((abstracta.TCDDependencia) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.UNIDIRECCIONAL);
+			((abstracta.TCDDependencia) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.NONE);
+		}
+		
 		nuevaRelacionSource.setNombreOrigen(((TCDDependencia) tcdRelacionC).getNombreOrigen());
 		nuevaRelacionSource.setNombreDestino(((TCDDependencia) tcdRelacionC).getNombreDestino());
 
@@ -328,6 +336,14 @@ public class TransformacionM2M {
 	private void relacionTCDComposicion(TCDRelacion tcdRelacionC, abstracta.TCDComposicion nuevaRelacionSource,
 			abstracta.TCDComposicion nuevaRelacionTarget) {
 
+		if (((TCDComposicion) tcdRelacionC).getNavegavilidad().getName().equalsIgnoreCase("bidireccional")) {
+			((abstracta.TCDComposicion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
+			((abstracta.TCDComposicion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
+		} else {
+			((abstracta.TCDComposicion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.UNIDIRECCIONAL);
+			((abstracta.TCDComposicion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.NONE);
+		}
+		
 		nuevaRelacionSource.setNombreOrigen(((TCDComposicion) tcdRelacionC).getNombreOrigen());
 		nuevaRelacionSource.setNombreDestino(((TCDComposicion) tcdRelacionC).getNombreDestino());
 
@@ -418,6 +434,14 @@ public class TransformacionM2M {
 	private void relacionTCDAgregacion(TCDRelacion tcdRelacionC, abstracta.TCDAgregacion nuevaRelacionSource,
 			abstracta.TCDAgregacion nuevaRelacionTarget) {
 
+		if (((TCDAgregacion) tcdRelacionC).getNavegavilidad().getName().equalsIgnoreCase("bidireccional")) {
+			((abstracta.TCDAgregacion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
+			((abstracta.TCDAgregacion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.BIDIRECCIONAL);
+		} else {
+			((abstracta.TCDAgregacion) nuevaRelacionSource).setNavegavilidad(abstracta.Navegavilidad.UNIDIRECCIONAL);
+			((abstracta.TCDAgregacion) nuevaRelacionTarget).setNavegavilidad(abstracta.Navegavilidad.NONE);
+		}
+		
 		nuevaRelacionSource.setNombreOrigen(((TCDAgregacion) tcdRelacionC).getNombreOrigen());
 		nuevaRelacionSource.setNombreDestino(((TCDAgregacion) tcdRelacionC).getNombreDestino());
 
